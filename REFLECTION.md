@@ -32,5 +32,7 @@ I have made an observation that run has to call the function scan_token, so scan
 =====================================
 
 scan_token is the brain of the scanner. It is where every token decision is made.
-git
+I am declarating a variable c with the method call for the advance function so the scan_token function can read the current character and advance self.current by one, this way the scanner moves past that character.
 
+I am using Rust's match key word to identify and classify words as their token types.
+I have matched patterns to actions for token types for PUNCTUATION, ARITHMETIC

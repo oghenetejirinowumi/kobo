@@ -42,7 +42,82 @@ impl Scanner {
         //            whitespace and comments, and an unrecognised character is 'Character is
         //            not part of any token.' (5.1).
 
-        todo!("scan_token")
+        let c = self.advance();
+        match c {
+            // PUNCTUATION
+            '(' => self.add(TokenType::LeftParen),
+            ')' => self.add(TokenType::RightParen),
+            '{' => self.add(TokenType::LeftBrace),
+            '}' => self.add(TokenType::RightBrace),
+            ',' => self.add(TokenType::Comma),
+            ';' => self.add(TokenType::Semicolon),
+            '.' => self.add(TokenType::Dot),
+
+            // ARITHMETIC
+            '+' => self.add(TokenType::Plus),
+            '-' => self.add(TokenType::Minus),
+            '*' => self.add(TokenType::Star),
+
+            '/' => {
+                if self.peek() == '/' {
+                    self.advance();
+                    // To consume the second slash
+                    while !self.at_end() && self.peek() != '\n' {
+                        self.advance();
+                    }
+                } else {
+                    self.add(TokenType::slash);
+                }
+            }
+
+            // EQUALITY & COMPARISON, NEGATION ASSIGNMENT
+            '!' => {
+                if !self.at_end() && self.peek() == '=' {
+                    self.advance();
+                    self.add(TokenType::BangEqual);
+                } else {
+                    self.add(TokenType::Bang)
+                }
+            }
+
+            '=' => {
+                if !self.at_end() && self.peek() == '=' {
+                    self.advance();
+                    self.add(TokenType::EqualEqual);
+                } else {
+                    self.add(TokenType::Equal)
+                }
+            }
+
+            '<' => {
+                if !self.at_end() && self.peek() == '=' {
+                    self.advance();
+                    self.add(TokenType::LessEqual);
+                } else {
+                    self.add(TokenType::Less)
+                }
+            }
+
+            '>' => {
+                if !self.at_end() && self.peek() == '=' {
+                    self.advance();
+                    self.add(TokenType::GreaterEqual);
+                } else {
+                    self.add(TokenType::Greater)
+                }
+            }
+
+            '' | '\t' | '\r' => {}
+
+            '\n' => {
+                self.line +=1
+            }
+
+            '"' => self.string(),
+            '0'..='9' => self.number(),
+            'a'..='z' | 'A'..='Z' | '_' => self.identifier(),
+        }
+
     }
 
     fn string(&mut self) {
