@@ -35,4 +35,10 @@ scan_token is the brain of the scanner. It is where every token decision is made
 I am declarating a variable c with the method call for the advance function so the scan_token function can read the current character and advance self.current by one, this way the scanner moves past that character.
 
 I am using Rust's match key word to identify and classify words as their token types.
-I have matched patterns to actions for token types for PUNCTUATION, ARITHMETIC
+I have matched patterns to actions for token types for PUNCTUATION and ARITHMETIC symbols.
+For EQUALITY, COMPARISON, NEGATION & ASSIGNMENT operators / symbols i am using an if statement to make sure the scanner is not at the EOF (src.len() != 0) and i am peeking so i see the self.current without advancing. I am then assigning token types to each token (SLASH, BangEqual, Bang, EqualEqual, Equal, LessEqual, Less, GreaterEqual, Greater)
+
+=====================================
+2. string
+=====================================
+When scan_token sees a '"' it calls self.string(). self.start points at the opening '"'. self.current will point at the one jsut after since at the begining i already did self.advance(). I will consider self.line() because strings can span multiple lines and the self.line() must increment. When the opening '"' is scanned it looks for the closing '"' or it goes to the EOF.
