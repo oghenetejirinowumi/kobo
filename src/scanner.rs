@@ -161,7 +161,27 @@ impl Scanner {
     fn identifier(&mut self) {
         // TODO(you): scan an identifier, then decide whether it is a keyword; keyword() in
         //            token.rs does the lookup (1.2, 1.3).
-        todo!("identifier")
+        while (self.peek() >= 'a' && self.peek() <= 'z') ||
+              (self.peek() >= 'A' && self.peek() <= 'Z') ||
+              (self.peek() >= '0' && self.peek() <= '9') ||
+              self.peek() == '_' {
+                self.advance();
+              }
+
+        // let mut identifier = String::new();
+        // for i in self.start..self.current }
+        // identifier.push(self.src[i]);
+
+        let word: String = self.src[self.start..self.current].iter().collect();
+
+        // let kind = match keyword(%word) {
+        //     Some() => t;
+        //     None => TokenType::Identifier,
+        // };
+
+        let kind = keyword(&word).unwrap_or(TokenType::Identifier);
+
+        self.add(kind);
     }
 
     // --- primitives ---------------------------------------------------------------

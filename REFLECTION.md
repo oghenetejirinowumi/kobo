@@ -47,3 +47,8 @@ When scan_token sees a '"' it calls self.string(). self.start points at the open
 3. number
 =====================================
 I am using a while loop to check the current character the scanner is on and ensure it is a digit between [0..9] and after it checks if there is a decimal point (.) and ensures that a number follows the decimal point fulfulling the rule for a VALID NUMBER.
+=====================================
+4. Identifier
+=====================================
+I am writing a function to decide if lexemes are ordinaly words or reserved keywords. The scanner consumes the whole word and then decides the token type but looking up the word in the KEYWORD TABLE. If it is a keyword, it will emit the keyword's TOKEN. Otherwise, emit IDENTIFIER.
+
