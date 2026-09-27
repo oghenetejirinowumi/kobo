@@ -42,3 +42,8 @@ For EQUALITY, COMPARISON, NEGATION & ASSIGNMENT operators / symbols i am using a
 2. string
 =====================================
 When scan_token sees a '"' it calls self.string(). self.start points at the opening '"'. self.current will point at the one jsut after since at the begining i already did self.advance(). I will consider self.line() because strings can span multiple lines and the self.line() must increment. When the opening '"' is scanned it looks for the closing '"' or it goes to the EOF.
+
+=====================================
+3. number
+=====================================
+I am using a while loop to check the current character the scanner is on and ensure it is a digit between [0..9] and after it checks if there is a decimal point (.) and ensures that a number follows the decimal point fulfulling the rule for a VALID NUMBER.

@@ -123,7 +123,6 @@ impl Scanner {
     fn string(&mut self) {
         // TODO(you): scan a string literal. A string may span lines (1.5); an unterminated one
         //            is reported at the line it opened on (5.1).
-        fn string(&mut self) {
             let opening_line = self.line();
 
             while !self.at_end() && self.peek() != '"' {
@@ -140,13 +139,23 @@ impl Scanner {
 
             self.advance();
             self.add(TokenType::Str);
-        }
     }
 
     fn number(&mut self) {
         // TODO(you): scan a number literal: digits, then a fractional part only when a digit
         //            follows the dot (1.4).
-        todo!("number")
+        while self.peek() >= '0' && self.peek() <= '9' {
+            self.advance();
+        }
+
+        if self.peek() == '.' && self.peek_next() >= '0' && self.peek_next() <= '9'{
+            self.advance();
+            while self.peek() >= '0' && self.peek() <= '9' {
+                self.advance();
+            }
+        }
+
+        self.add(TokenType::Number);
     }
 
     fn identifier(&mut self) {
