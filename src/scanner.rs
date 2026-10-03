@@ -30,11 +30,15 @@ impl Scanner {
         //            add the EOF token. Spec 6.1 says which line EOF carries.
 
         while !self.at_end() {
-            self.start = self.current;
-            self.scan_token()
-        } else {
-            EOF()
+            self.start = self.current; 
+            self.scan_token();
+        
         }
+
+        self.line = self.tokens.last().map(|t| t.line).unwrap_or(1);
+
+        self.start = self.current;
+        self.add(TokenType::Eof);
     }
 
     fn scan_token(&mut self) {
@@ -45,13 +49,13 @@ impl Scanner {
         let c = self.advance();
         match c {
             // PUNCTUATION
-            '(' => self.add(TokenType::LeftParen),
-            ')' => self.add(TokenType::RightParen),
-            '{' => self.add(TokenType::LeftBrace),
-            '}' => self.add(TokenType::RightBrace),
+            '(' => self.add(TokenType::LParen),
+            ')' => self.add(TokenType::RParen),
+            '{' => self.add(TokenType::LBrace),
+            '}' => self.add(TokenType::RBrace),
             ',' => self.add(TokenType::Comma),
             ';' => self.add(TokenType::Semicolon),
-            '.' => self.add(TokenType::Dot),
+            // '.' => self.add(TokenType::Dot),
 
             // ARITHMETIC
             '+' => self.add(TokenType::Plus),
@@ -66,7 +70,7 @@ impl Scanner {
                         self.advance();
                     }
                 } else {
-                    self.add(TokenType::slash);
+                    self.add(TokenType::Slash);
                 }
             }
 
@@ -107,7 +111,7 @@ impl Scanner {
                 }
             }
 
-            '' | '\t' | '\r' => {}
+            ' ' | '\t' | '\r' => {}
 
             '\n' => {
                 self.line +=1
@@ -116,6 +120,7 @@ impl Scanner {
             '"' => self.string(),
             '0'..='9' => self.number(),
             'a'..='z' | 'A'..='Z' | '_' => self.identifier(),
+            _ => self.error(self.line, "Character is not part of any token."),
         }
 
     }
@@ -123,7 +128,7 @@ impl Scanner {
     fn string(&mut self) {
         // TODO(you): scan a string literal. A string may span lines (1.5); an unterminated one
         //            is reported at the line it opened on (5.1).
-            let opening_line = self.line();
+            let opening_line = self.line;
 
             while !self.at_end() && self.peek() != '"' {
                 if self.peek() == '\n' {
@@ -133,7 +138,7 @@ impl Scanner {
             }
 
             if self.at_end() {
-                self.error(opening_line, "String was never closed.")
+                self.error(opening_line, "String is never closed.");
                 return;
             }
 
@@ -144,13 +149,13 @@ impl Scanner {
     fn number(&mut self) {
         // TODO(you): scan a number literal: digits, then a fractional part only when a digit
         //            follows the dot (1.4).
-        while self.peek() >= '0' && self.peek() <= '9' {
+        while self.peek().is_ascii_digit(){
             self.advance();
         }
 
-        if self.peek() == '.' && self.peek_next() >= '0' && self.peek_next() <= '9'{
+        if self.peek() == '.' && self.peek_next().is_ascii_digit(){
             self.advance();
-            while self.peek() >= '0' && self.peek() <= '9' {
+            while self.peek().is_ascii_digit() {
                 self.advance();
             }
         }
@@ -161,12 +166,16 @@ impl Scanner {
     fn identifier(&mut self) {
         // TODO(you): scan an identifier, then decide whether it is a keyword; keyword() in
         //            token.rs does the lookup (1.2, 1.3).
-        while (self.peek() >= 'a' && self.peek() <= 'z') ||
-              (self.peek() >= 'A' && self.peek() <= 'Z') ||
-              (self.peek() >= '0' && self.peek() <= '9') ||
-              self.peek() == '_' {
-                self.advance();
-              }
+        // while (self.peek() >= 'a' && self.peek() <= 'z') ||
+        //       (self.peek() >= 'A' && self.peek() <= 'Z') ||
+        //       (self.peek() >= '0' && self.peek() <= '9') ||
+        //       self.peek() == '_' {
+        //         self.advance();
+        //       }
+
+        while self.peek().is_ascii_alphanumeric() || self.peek() == '_' {
+            self.advance();
+        }
 
         // let mut identifier = String::new();
         // for i in self.start..self.current }
